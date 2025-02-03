@@ -1,6 +1,6 @@
 <template>
   <div class="chart-container">
-    <h2>Revenue last 3 years</h2>
+    <h2 style="font-size: 20px;">Revenue last 3 years</h2>
     <canvas ref="chart"></canvas>
   </div>
 </template>
@@ -9,136 +9,97 @@
 import { ref, onMounted, nextTick } from 'vue';
 import { Chart, Title, Tooltip, Legend, LineController, LineElement, PointElement, CategoryScale, LinearScale } from 'chart.js';
 
-// Registriere die notwendigen Komponenten für ein Liniendiagramm
+// Registriere die notwendigen Chart.js Komponenten
 Chart.register(Title, Tooltip, Legend, LineController, LineElement, PointElement, CategoryScale, LinearScale);
 
 export default {
-  name: 'Laste3YearsChart',
+  name: 'Last3YearsChart',
   setup() {
     const chart = ref(null);
+    const stockDataUrl = '/stockData.json';
+    const colorPalette = [
+      '#39DAFF', '#31BFE2', '#29A5C5', '#218AA8',
+      '#196F8C', '#11546F', '#093A52'
+    ];
 
-    onMounted(() => {
-      nextTick(() => {
-        if (chart.value) {
-          try {
-            new Chart(chart.value, {
-             
-type: 'line', // ✅ Richtiger Typ (in Kleinbuchstaben)
-              
-                data: {
-  labels: [
-    'Q1 2021', 'Q2 2021', 'Q3 2021', 'Q4 2021',
-    'Q1 2022', 'Q2 2022', 'Q3 2022', 'Q4 2022',
-    'Q1 2023', 'Q2 2023', 'Q3 2023', 'Q4 2023'
-  ],
-  datasets: [
-    {
-      label: 'Apple',
-      data: [90, 95, 100, 95, 100, 105, 110, 105, 110, 115, 120, 115],
-      borderColor: '#FFFFFF',
-      borderWidth: 1,
-      backgroundColor: '#39DAFF',
-      fill: true,
-    },
-    {
-      label: 'Microsoft',
-      data: [40, 42, 45, 43, 46, 48, 50, 49, 52, 54, 56, 55],
-      borderColor: '#FFFFFF',
-      borderWidth: 1,
-      backgroundColor: '#31BFE2',
-      fill: true,
-    },
-    {
-      label: 'Google',
-      data: [60, 65, 70, 68, 72, 75, 78, 76, 80, 83, 86, 84],
-      borderColor: '#FFFFFF',
-      borderWidth: 1,
-      backgroundColor: '#29A5C5',
-      fill: true,
-    },
-    {
-      label: 'Amazon',
-      data: [110, 115, 120, 118, 122, 125, 130, 128, 135, 138, 142, 140],
-      borderColor: '#FFFFFF',
-      borderWidth: 1,
-      backgroundColor: '#218AA8',
-      fill: true,
-    },
-    {
-      label: 'Meta',
-      data: [25, 28, 30, 29, 32, 34, 36, 35, 38, 40, 42, 41],
-      borderColor: '#FFFFFF',
-      borderWidth: 1,
-      backgroundColor: '#196F8C',
-      fill: true,
-    },
-    {
-      label: 'Tesla',
-      data: [15, 18, 20, 19, 22, 25, 27, 26, 28, 30, 32, 31],
-      borderColor: '#FFFFFF',
-      borderWidth: 1,
-      backgroundColor: '#11546F',
-      fill: true,
-    },
-    {
-      label: 'Nvidia',
-      data: [12, 14, 16, 15, 18, 20, 22, 21, 24, 26, 28, 27],
-      borderColor: '#FFFFFF',
-      borderWidth: 1,
-      backgroundColor: '#093A52',
-      fill: true,
-    }
-  ],
-},
+    onMounted(async () => {
+  try {
+    const response = await fetch(stockDataUrl);
+    const jsonData = await response.json();
 
+    const labels = [
+      'Q1 2022', 'Q2 2022', 'Q3 2022', 'Q4 2022',
+      'Q1 2023', 'Q2 2023', 'Q3 2023', 'Q4 2023',
+      'Q1 2024', 'Q2 2024', 'Q3 2024', 'Q4 2024'
+    ];
 
+    // 🎯 Daten umwandeln: Wandelt JSON-Daten in Chart.js Format um
+    const datasets = jsonData.companies.map((company, index) => ({
+      label: company.name,
+      data: [
+        company.revenue['2022'].Q1, company.revenue['2022'].Q2, company.revenue['2022'].Q3, company.revenue['2022'].Q4,
+        company.revenue['2023'].Q1, company.revenue['2023'].Q2, company.revenue['2023'].Q3, company.revenue['2023'].Q4,
+        company.revenue['2024'].Q1, company.revenue['2024'].Q2, company.revenue['2024'].Q3, company.revenue['2024'].Q4
+      ],
+      borderColor: 'white', // Weißer Rand
+      borderWidth: 1,
+      backgroundColor: colorPalette[index % colorPalette.length], // Farben als Hintergrund
+      fill: true,
+    }));
 
-              options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                  legend: {
-                    position: 'right',
-                  },
-                  tooltip: {
-                    enabled: true,
-                    callbacks: {
-                      label: function (tooltipItem) {
-                        return `${tooltipItem.raw} Mrd. $`;
-                      },
-                    },
-                  },
+    nextTick(() => {
+      if (chart.value) {
+        new Chart(chart.value, {
+          type: 'line',
+          data: {
+            labels,
+            datasets
+          },
+          options: {
+            responsive: true,
+            scales: {
+              x: {
+                ticks: {
+                  color: 'white', // Labels auf der X-Achse in Weiß
                 },
-                scales: {
-                  x: {
-                    title: {
-                      display: true,
-                      text: 'Year',
-                    },
-                  },
-                  y: {
-                    title: {
-                      display: true,
-                      text: 'In Billion USD',
-                    },
-                    beginAtZero: true,
-                  },
+                grid: {
+                  color: '#9E9E9E', // Gitterlinien auf der X-Achse in #9E9E9E
                 },
               },
-            });
-          } catch (error) {
-            console.error('Fehler bei der Diagramm-Erstellung:', error);
-          }
-        } else {
-          console.error('Canvas-Element wurde nicht gefunden');
-        }
-      });
+              y: {
+                ticks: {
+                  color: 'white', // Labels auf der Y-Achse in Weiß
+                },
+                grid: {
+                  color: '#9E9E9E', // Gitterlinien auf der Y-Achse in #9E9E9E
+                },
+              },
+            },
+            plugins: {
+              legend: {
+                display: true,
+                position: 'right',
+                labels: {
+                  color: 'white', // Legenden-Beschriftung in Weiß
+                },
+              },
+              tooltip: {
+                enabled: true,
+              },
+            },
+          },
+        });
+      }
     });
 
-    return {
-      chart,
-    };
-  },
+  } catch (error) {
+    console.error('Fehler beim Laden der JSON-Daten:', error);
+  }
+});
+
+
+    return { chart };
+  }
 };
 </script>
 
@@ -151,15 +112,6 @@ type: 'line', // ✅ Richtiger Typ (in Kleinbuchstaben)
   border-radius: 16px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   color: white;
-  height: 400px;
-  border-color: white;
-}
-
-canvas {
-  display: block;
-  width: 100%;
-  height: 100%;
-  color: white;
-  border-color: white;
+  height: 200px;
 }
 </style>

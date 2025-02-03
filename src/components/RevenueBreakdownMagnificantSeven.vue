@@ -1,12 +1,15 @@
+
 <template>
   <div class="chart-container">
-    <h2>Revenue Breakdown Magnificant Seven</h2>
+    <h2 style="font-size: 20px;">Revenue Breakdown Magnificant Seven</h2>
     <canvas ref="chart"></canvas>
   </div>
 </template>
 
 <script>
 import { ref, onMounted, nextTick } from 'vue';
+// Importiere die stockData.json
+import stockData from '../stockData.json';
 import { Chart, Title, Tooltip, Legend, ArcElement, DoughnutController } from 'chart.js';
 
 // 🔹 WICHTIG: Registriere den DoughnutController!
@@ -18,53 +21,64 @@ export default {
     const chart = ref(null);
 
     onMounted(() => {
-      nextTick(() => {
-        if (chart.value) {
-          try {
-            new Chart(chart.value, {
-              type: 'doughnut', // 🔹 Jetzt wird der Typ richtig erkannt
-              data: {
-                labels: ['Apple', 'Microsoft', 'Google', 'Amazon', 'Tesla', 'Nvidia', 'Meta'],
-                datasets: [
-                  {
-                    label: 'Net Income TTM (in Mrd. $)',
-                    data: [62.62, 40.15, 39.50, 24.51, 26.25, 6.81, 3.16],
-                    backgroundColor: [
-                      '#39DAFF', '#31BFE2', '#29A5C5', '#218AA8',
-                      '#196F8C', '#11546F', '#093A52'
-                    ],
-                    borderColor: '#FFFFFF',
-                    borderWidth: 1,
-                  },
-                ],
+  nextTick(() => {
+    if (chart.value) {
+      try {
+        // Extrahiere die Daten aus stockData
+        const companies = stockData.companies;
+        const labels = companies.map(company => company.name);
+        const data = companies.map(company => company.netIncome);
+        const backgroundColor = [
+          '#39DAFF', '#31BFE2', '#29A5C5', '#218AA8',
+          '#196F8C', '#11546F', '#093A52'
+        ];
+
+        // Erstelle das Diagramm
+        new Chart(chart.value, {
+          type: 'doughnut',
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: 'Net Income TTM (in Mrd. $)',
+                data: data,
+                backgroundColor: backgroundColor,
+                borderColor: '#FFFFFF',
+                borderWidth: 1,
               },
-              options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                  legend: {
-                    position: 'right',
-                  },
-                  tooltip: {
-                    enabled: true,
-                    callbacks: {
-                      label: function (tooltipItem) {
-                        let value = tooltipItem.raw;
-                        return ` ${value} Mrd. $`;
-                      },
-                    },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'right',
+                labels: {
+                  color: 'white', // Setzt die Legenden-Beschriftungen auf Weiß
+                },
+              },
+              tooltip: {
+                enabled: true,
+                callbacks: {
+                  label: function (tooltipItem) {
+                    let value = tooltipItem.raw;
+                    return ` ${value} Mrd. $`;
                   },
                 },
               },
-            });
-          } catch (error) {
-            console.error('Fehler bei der Diagramm-Erstellung:', error);
-          }
-        } else {
-          console.error('Canvas-Element wurde nicht gefunden');
-        }
-      });
-    });
+            },
+          },
+        });
+      } catch (error) {
+        console.error('Fehler bei der Diagramm-Erstellung:', error);
+      }
+    } else {
+      console.error('Canvas-Element wurde nicht gefunden');
+    }
+  });
+});
+
 
     return {
       chart,
@@ -75,14 +89,14 @@ export default {
 
 <style scoped>
 .chart-container {
-  max-width: 500px;
+  max-width: 800px;
   margin: 0 auto;
   padding: 20px;
   background-color: #011F35;
   border-radius: 16px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   color: white;
-  height: 400px;
+  height: 200px;
 }
 
 canvas {
@@ -90,4 +104,5 @@ canvas {
   width: 100%;
   height: 100%;
 }
+
 </style>

@@ -91,7 +91,7 @@ export default {
 
    <template>
     <div class="chart-container">
-      <h2>Revenue Growth in % YoY</h2>
+      <h2 style="font-size: 20px;">Revenue Growth in % YoY</h2>
       <canvas ref="chart"></canvas>
     </div>
   </template>
@@ -99,6 +99,8 @@ export default {
   <script>
   import { ref, onMounted, nextTick } from 'vue';
   import { Chart, CategoryScale, LinearScale, BarElement, BarController, Title, Tooltip, Legend } from 'chart.js';
+  // Importiere die JSON-Daten
+  import stockData from '../stockData.json'; // Passe den Pfad ggf. an
   
   // Registriere die notwendigen Komponenten
   Chart.register(CategoryScale, LinearScale, BarElement, BarController, Title, Tooltip, Legend);
@@ -112,52 +114,78 @@ export default {
         nextTick(() => {
           if (chart.value) {
             try {
+              // Extrahiere die relevanten Daten für das Diagramm
+              const companies = stockData.companies;
+              const labels = companies.map(company => company.name);
+              const dataQ1 = companies.map(company => company.revenueGrowthYoY.Q1);
+              const dataQ2 = companies.map(company => company.revenueGrowthYoY.Q2);
+              const dataQ3 = companies.map(company => company.revenueGrowthYoY.Q3);
+              const dataQ4 = companies.map(company => company.revenueGrowthYoY.Q4);
+  
+              // Erstelle das Diagramm
               new Chart(chart.value, {
                 type: 'bar',
                 data: {
-                  labels: ['Apple', 'Microsoft', 'Google', 'Amazon', 'Tesla', 'Nvidia', 'Meta'],
+                  labels: labels, // Firmennamen als Beschriftungen
                   datasets: [
                     {
                       label: 'Q1',
-                      data: [5.2, 3.8, 4.1, 2.9, 3.2, 1.8, 2.5],
+                      data: dataQ1,
                       backgroundColor: '#39DAFF',
                     },
                     {
                       label: 'Q2',
-                      data: [6.1, 4.2, 4.8, 3.1, 3.5, 2.1, 2.8],
+                      data: dataQ2,
                       backgroundColor: '#31BFE2',
                     },
                     {
                       label: 'Q3',
-                      data: [5.8, 4.5, 4.9, 3.5, 3.7, 2.4, 3.0],
+                      data: dataQ3,
                       backgroundColor: '#29A5C5',
                     },
                     {
                       label: 'Q4',
-                      data: [6.3, 4.9, 5.2, 3.8, 4.1, 2.7, 3.4],
+                      data: dataQ4,
                       backgroundColor: '#218AA8',
                     },
                   ],
                 },
                 options: {
-                  responsive: true,
-                  maintainAspectRatio: false,
-                  indexAxis: 'x', // Balken horizontal ausrichten
-                  scales: {
-                    x: {
-                      beginAtZero: true,
-                    },
-                  },
-                  plugins: {
-                    legend: {
-                      position: 'right', // Legende oben anzeigen
-                    },
-                    tooltip: {
-                      enabled: true,
-                    },
-                  },
-                },
-              });
+    responsive: true,
+    maintainAspectRatio: false,
+    indexAxis: 'x',
+    scales: {
+      x: {
+        beginAtZero: true,
+        ticks: {
+          color: 'white', // Achsen-Beschriftung auf Weiß setzen
+        },
+        grid: {
+          // color: '#9E9E9E', // Gitterlinien auf Weiß setzen
+        },
+      },
+      y: {
+        ticks: {
+          color: 'white', // Auch Y-Achsen-Beschriftung auf Weiß setzen
+        },
+        grid: {
+          color: '#9E9E9E', // Gitterlinien auf Weiß setzen
+        },
+      },
+    },
+    plugins: {
+      legend: {
+        position: 'right',
+        labels: {
+          color: 'white', // Legenden-Beschriftung auf Weiß setzen
+        },
+      },
+      tooltip: {
+        enabled: true,
+      },
+    },
+  },
+});
             } catch (error) {
               console.error('Fehler bei der Diagramm-Erstellung:', error);
             }
@@ -176,14 +204,14 @@ export default {
   
   <style scoped>
   .chart-container {
-    max-width: 900px;
+    max-width: 800px;
     margin: 0 auto;
     padding: 20px;
     background-color: #011F35;
     border-radius: 16px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     color: white;
-    height: 400px;
+    height: 300px; /* Höhe des Diagramms angepasst */
   }
   
   canvas {
@@ -191,5 +219,5 @@ export default {
     width: 100%;
     height: 100%;
   }
-  </style>
   
+  </style>
