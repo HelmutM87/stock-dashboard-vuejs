@@ -7,98 +7,87 @@
 
 <script>
 import { ref, onMounted, nextTick } from 'vue';
-
 import { Chart, CategoryScale, LinearScale, BarElement, BarController, Title, Tooltip, Legend } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-// Registriere die notwendigen Chart.js Komponenten
+import stockData from '../stockData.json';
+
 Chart.register(CategoryScale, LinearScale, BarElement, BarController, Title, Tooltip, Legend, ChartDataLabels);
 
 export default {
   name: 'NetIncome',
   setup() {
     const chart = ref(null);
-    const stockDataUrl = '/stockData.json'; // JSON-Datei mit den Daten
     const colorPalette = ['#39DAFF', '#31BFE2', '#29A5C5', '#218AA8', '#196F8C', '#11546F', '#093A52'];
 
-    onMounted(async () => {
-  try {
-    const response = await fetch(stockDataUrl);
-    const jsonData = await response.json();
+    onMounted(() => {
+      const labels = stockData.companies.map(company => company.name);
+      const netIncomeData = stockData.companies.map(company => company.netIncome);
 
-    // Extrahiere Labels (Unternehmensnamen) und NetIncome-Daten
-    const labels = jsonData.companies.map(company => company.name);
-    const netIncomeData = jsonData.companies.map(company => company.netIncome);
-
-    nextTick(() => {
-      if (chart.value) {
-        new Chart(chart.value, {
-          type: 'bar',
-          data: {
-            labels,
-            datasets: [
-              {
-                label: 'Net Income TTM',
-                data: netIncomeData,
-                backgroundColor: colorPalette.slice(0, labels.length),
-                borderColor: '#FFFFFF',
-                borderWidth: 1,
-              },
-            ],
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            indexAxis: 'y',
-            scales: {
-              x: {
-                beginAtZero: true,
-                ticks: {
-                  color: 'white', // X-Achsen-Beschriftungen in Weiß
+      nextTick(() => {
+        if (chart.value) {
+          new Chart(chart.value, {
+            type: 'bar',
+            data: {
+              labels,
+              datasets: [
+                {
+                  label: 'Net Income TTM',
+                  data: netIncomeData,
+                  backgroundColor: colorPalette.slice(0, labels.length),
+                  borderColor: '#FFFFFF',
+                  borderWidth: 1,
                 },
-                grid: {
-                  color: '#9E9E9E', // Gitterlinien in #9E9E9E für X-Achse
-                },
-              },
-              y: {
-                ticks: {
-                  color: 'white', // Y-Achsen-Beschriftungen in Weiß
-                },
-                grid: {
-                  color: '#9E9E9E', // Gitterlinien in #9E9E9E für Y-Achse
-                },
-              },
+              ],
             },
-            plugins: {
-              legend: {
-                display: false,
-                position: 'right',
-                labels: {
-                  color: 'white', // Legenden-Beschriftungen in Weiß
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              indexAxis: 'y',
+              scales: {
+                x: {
+                  beginAtZero: true,
+                  ticks: {
+                    color: 'white',
+                  },
+                  grid: {
+                    color: '#9E9E9E',
+                  },
                 },
-              },
-              tooltip: {
-                enabled: true,
-              },
-              datalabels: {
-                    color: 'white', // Farbe der Beschriftung
-                    align: 'end', // Position der Beschriftung am Ende des Balkens
-                    anchor: 'end', // Ankerpunkt der Beschriftung
-                    font: {
-                      size: 11,
-                      weight: 'bold', // Schriftgewicht der Beschriftung
-                    },
+                y: {
+                  ticks: {
+                    color: 'white',
+                  },
+                  grid: {
+                    color: '#9E9E9E',
                   },
                 },
               },
-            });
-          }
-        });
-
-  } catch (error) {
-    console.error('Fehler beim Laden der JSON-Daten:', error);
-  }
-});
-
+              plugins: {
+                legend: {
+                  display: false,
+                  position: 'right',
+                  labels: {
+                    color: 'white',
+                  },
+                },
+                tooltip: {
+                  enabled: true,
+                },
+                datalabels: {
+                  color: 'white',
+                  align: 'end',
+                  anchor: 'end',
+                  font: {
+                    size: 11,
+                    weight: 'bold',
+                  },
+                },
+              },
+            },
+          });
+        }
+      });
+    });
 
     return { chart };
   },
