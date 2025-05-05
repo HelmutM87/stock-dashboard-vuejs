@@ -121,6 +121,6 @@ canvas {
   display: block;
   box-sizing: border-box;
   width: 80%;
-  height: 80%!important;
+  height: 86%!important;
 }
 </style>

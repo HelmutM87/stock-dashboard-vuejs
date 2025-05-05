@@ -110,6 +110,6 @@ export default {
 .canvas {
   display: block;
   width: 100%;
-  height: 80%!important;
+  height: 86%!important;
 }
 </style>
