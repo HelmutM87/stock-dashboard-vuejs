@@ -95,13 +95,13 @@
     border-radius: 16px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     color: white;
-    height: 300px;
+    height: 380px;
   }
   
   canvas {
     display: block;
     width: 100%;
-    height: 100%;
+    height: 80%!important;
   }
   </style>
   

@@ -3,9 +3,11 @@
 
 <template>
 <div class="headline">
-  
-    <h1>The Magnificant Seven Companies </h1>
+    <div class="rectangle"></div>
+    <h1>The Magnificent Seven Companies </h1>
 </div>
+
+<div class="container">
   <div class="top-container">
     <!-- <BaseCard v-if="data" :data="data"> -->
     <CompanyCards>
@@ -25,6 +27,8 @@
   <GrossMargin></GrossMargin>
   <RevenueGrowth></RevenueGrowth>
   </div>
+
+</div>
   
 </template>
 
@@ -89,12 +93,13 @@ body {
 }
 
 #app {
+  
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   /* height: 100vh; */
-  padding: 16px;
+  padding: 148px 16px 16px 16px;
   box-sizing: border-box;
 }
 
@@ -104,32 +109,63 @@ body {
   margin: 0 auto;
 }
 
+.container{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  /* height: 100vh; */
+  max-width: 1440px;
+  padding: 0px 16px 16px 16px;
+  box-sizing: border-box;
+  gap: 24px;
+}
+
 .top-container {
-  max-width: 86vw;
-  margin-bottom: 20px;
+  /* top: 100px; */
+  /* max-width: 86vw; */
+  /* margin-bottom: 20px; */
   background-color: #023A6233;
   display: flex;
-  padding: 24px;
+  justify-content: center;
+  width: 100%;
+  /* padding: 24px; */
   border-radius: 20px;
   /* gap: 24px; */
 }
 
 .middle-container {
-  max-width: 86vw;
+  /* max-width: 86vw; */
   display: flex;
   justify-content: space-between;
-  margin-bottom: 20px;
+  /* margin-bottom: 20px; */
+  width: 100%;
+  gap: 24px;
 }
 
 .bottom-container {
-  max-width: 86vw;
+  /* max-width: 86vw; */
   display: flex;
   justify-content: space-between;
+  gap: 24px;
+  height: 400px;
 }
 
 .headline {
-  /* position: absolute; */
-    /* top: 50px;
-    left: 50px; */
+  position: absolute; 
+     top: 50px;
+     left: 0;
+     display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.rectangle {
+  width: 96px;
+  height: 32px;
+  background-color: #39DAFF;
+  border-radius: 0 20px 20px 0;
+  
+  /* margin-bottom: 20px; */
 }
 </style>

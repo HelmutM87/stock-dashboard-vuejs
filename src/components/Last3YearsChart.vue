@@ -107,17 +107,20 @@ export default {
 <style scoped>
 .chart-container {
   max-width: 800px;
-  margin: 0 auto;
+  margin: 0;
   padding: 20px;
   background-color: #011f35;
   border-radius: 16px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   color: white;
   height: 400px;
+  display: flex;
+  flex-direction: column;
 }
 canvas {
   display: block;
-  width: 100%;
-  height: 100%;
+  box-sizing: border-box;
+  width: 80%;
+  height: 80%!important;
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div class="chart-container">
     <h2 style="font-size: 20px;">Net Income TTM</h2>
-    <canvas ref="chart"></canvas>
+    <canvas class="canvas" ref="chart"></canvas>
   </div>
 </template>
 
@@ -95,6 +95,7 @@ export default {
 </script>
 
 <style scoped>
+
 .chart-container {
   max-width: 800px;
   margin: 0 auto;
@@ -103,6 +104,12 @@ export default {
   border-radius: 16px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   color: white;
-  height: 200px;
+  height: 380px;
+}
+
+.canvas {
+  display: block;
+  width: 100%;
+  height: 80%!important;
 }
 </style>

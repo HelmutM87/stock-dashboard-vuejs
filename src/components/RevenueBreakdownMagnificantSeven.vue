@@ -1,6 +1,6 @@
 <template>
   <div class="chart-container">
-    <h2 style="font-size: 20px;">Revenue Breakdown Magnificant Seven</h2>
+    <h2 style="font-size: 20px;">Revenue Breakdown Magnificent Seven</h2>
     <canvas ref="chart"></canvas>
     <div class="labels-container">
       <div v-for="(company, index) in companies" :key="index" class="label-item">
@@ -93,8 +93,8 @@ export default {
 
 <style scoped>
 .chart-container {
-  max-width: 800px;
-  margin: 0 auto;
+  /* max-width: 800px; */
+  /* margin: 0 auto; */
   padding: 20px;
   background-color: #011F35;
   border-radius: 16px;
