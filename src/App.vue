@@ -116,6 +116,7 @@ body {
   align-items: center;
   /* height: 100vh; */
   max-width: 1440px;
+  width: 98%;
   padding: 0px 16px 16px 16px;
   box-sizing: border-box;
   gap: 24px;
@@ -168,4 +169,14 @@ body {
   
   /* margin-bottom: 20px; */
 }
+
+@media (max-width: 1030px) {
+  .middle-container {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+
 </style>
