@@ -33,15 +33,7 @@
 </template>
 
 <script>
-// import BaseCard from './components/BaseCard.vue';
 import CompanyCards from './components/CompanyCards.vue';
-// import BaseCardAmazon from './components/BaseCard.vue';
-// import BaseCardApple from './components/BaseCardApple.vue';
-// import BaseCardGoogle from './components/BaseCardGoogle.vue';
-// import BaseCardMeta from './components/BaseCardMeta.vue';
-// import BaseCardMicrosoft from './components/BaseCardMicrosoft.vue';
-// import BaseCardNvidia from './components/BaseCardNvidia.vue';
-// import BaseCardTesla from './components/BaseCardTesla.vue';
 import GrossMargin from './components/GrossMargin.vue';
 import Last3YearsChart from './components/Last3YearsChart.vue';
 import NetIncome from './components/NetIncome.vue';
@@ -54,14 +46,6 @@ export default {
   name: 'App',
   components: {
     CompanyCards,
-    // BaseCard,
-    // BaseCardApple,
-    // BaseCardMeta,
-    // BaseCardMicrosoft,
-    // BaseCardAmazon,
-    // BaseCardGoogle,
-    // BaseCardTesla,
-    // BaseCardNvidia,
     Last3YearsChart,
     BreakdownMagSeven,
     NetIncome,
@@ -177,6 +161,4 @@ body {
     align-items: center;
   }
 }
-
-
 </style>
