@@ -1,35 +1,31 @@
-
-
-
 <template>
-<div class="headline">
+  <div class="headline">
     <div class="rectangle"></div>
-    <h1>The Magnificent Seven Companies </h1>
-</div>
-
-<div class="container">
-  <div class="top-container">
-    <!-- <BaseCard v-if="data" :data="data"> -->
-    <CompanyCards>
-    <!-- <pre>{{ data }}</pre> -->
-    </CompanyCards>
-  <!-- <p v-else>Lade Daten...</p> -->
-  
+    <h1>The Magnificent Seven Companies</h1>
+    <button @click="refreshData" class="refresh-btn">
+      <i class="fas fa-sync-alt"></i> Aktualisieren
+    </button>
   </div>
 
-  <div class="middle-container">
-<Last3YearsChart></Last3YearsChart>
-  <BreakdownMagSeven></BreakdownMagSeven>
-  </div>
+  <div class="container" :class="{ loading: loading }">
+    <div v-if="loading" class="loading-overlay">Lade Live-Daten von Finnhub...</div>
 
-  <div class="bottom-container">
-    <NetIncome></NetIncome>
-  <GrossMargin></GrossMargin>
-  <RevenueGrowth></RevenueGrowth>
-  </div>
+    <div class="top-container">
+      <CompanyCards :companies="companies" />
+    </div>
 
-</div>
-  
+    <div class="middle-container">
+      <Last3YearsChart :companies="companies" /> <!-- muss noch angepasst werden -->
+      <!-- Breakdown vorerst auskommentiert oder statisch halten -->
+      <!-- <BreakdownMagSeven :companies="companies" /> -->
+    </div>
+
+    <div class="bottom-container">
+      <NetIncome :companies="companies" />
+      <GrossMargin :companies="companies" />
+      <!-- RevenueGrowth muss YoY aus historischen Daten berechnet werden -->
+    </div>
+  </div>
 </template>
 
 <script>
@@ -37,33 +33,40 @@ import CompanyCards from './components/CompanyCards.vue';
 import GrossMargin from './components/GrossMargin.vue';
 import Last3YearsChart from './components/Last3YearsChart.vue';
 import NetIncome from './components/NetIncome.vue';
-import BreakdownMagSeven from './components/RevenueBreakdownMagnificantSeven.vue';
-import RevenueGrowth from './components/RevenueGrowth.vue';
-import { stockService } from './services/stockService';
+// import BreakdownMagSeven from './components/RevenueBreakdownMagnificantSeven.vue';
 
+import { fetchMag7Data } from './services/finnhubService';
 
 export default {
   name: 'App',
   components: {
     CompanyCards,
     Last3YearsChart,
-    BreakdownMagSeven,
+    // BreakdownMagSeven,
     NetIncome,
     GrossMargin,
-    RevenueGrowth
+    // RevenueGrowth
   },
   data() {
     return {
-      data: null,
+      companies: [],
+      loading: false,
     };
   },
   async created() {
-    try {
-      this.data = await stockService();
-      console.log('Daten:', this.data);
-    } catch (error) {
-      console.error('Fehler beim Abrufen der Daten:', error);
-    }
+    await this.refreshData();
+  },
+  methods: {
+    async refreshData() {
+      this.loading = true;
+      try {
+        this.companies = await fetchMag7Data();
+      } catch (err) {
+        console.error('Refresh fehlgeschlagen', err);
+      } finally {
+        this.loading = false;
+      }
+    },
   },
 };
 </script>
@@ -137,12 +140,52 @@ body {
 }
 
 .headline {
-  position: absolute; 
-     top: 50px;
-     left: 0;
-     display: flex;
-    align-items: center;
-    gap: 24px;
+  position: absolute;
+  top: 40px;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  z-index: 10;
+}
+
+.refresh-btn {
+  background: #39DAFF33;
+  border: 1px solid #39DAFF;
+  color: #39DAFF;
+  padding: 8px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.refresh-btn:hover {
+  background: #39DAFF66;
+}
+
+.loading-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(1, 31, 53, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #39DAFF;
+  font-size: 1.3rem;
+  z-index: 5;
+  border-radius: 20px;
+}
+
+.loading .top-container,
+.loading .middle-container,
+.loading .bottom-container {
+  filter: blur(4px);
 }
 
 .rectangle {

@@ -1,111 +1,146 @@
-
-   <template>
-    <div class="card">
-      <div class="company-name">
-        <!-- Logo der Firma -->
-        <img :src="data.logo" :alt="data.name + ' logo'" class="company-logo" />
-        
-        <!-- Firmenname -->
-        <h2 style="font-size: 20px;">{{ data.name }}</h2>
-      </div>
-  
-      <p style="font-size: 12px;">Revenue Q4 2024</p>
-    
-      <div class="company-info">
-        <!-- Net Income -->
-        <div>
-          <p  style="font-size: 24px; font-weight: 500;">{{ data.netIncome }}</p>
-        </div>    
-  
-        <!-- Veränderung zum vorherigen Quartal -->
-        <div>
-          <p :class="changeAbsolute >= 0 ? 'positive' : 'negative'">
-            {{ changeAbsolute >= 0 ? '+' : '' }}{{ changeAbsolute.toFixed(2) }}
-            <span v-if="changeAbsolute >= 0">↑</span>
-            <span v-else>↓</span>
-          </p>
-          <p :class="changePercentage >= 0 ? 'positive' : 'negative'">
-            {{ changePercentage.toFixed(2) }}%
-          </p>
-        </div>
-      </div>
-      
-      <p style="font-size: 8px;">In Bill USD</p>
+<template>
+  <div class="card">
+    <div class="company-name">
+  <div class="logo-wrapper">
+    <img 
+      v-if="data.logo"
+      :src="data.logo" 
+      :alt="data.name + ' logo'" 
+      class="company-logo"
+      @error="handleLogoError"
+    />
+    <div v-else class="logo-placeholder">
+      {{ data.symbol }}
     </div>
-  </template>
-  
-  <script>
-  export default {
-    name: 'BaseCard',
-    props: {
-      data: {
-        type: Object,
-        required: true,
-      },
+  </div>
+  <h2>{{ data.name }}</h2>
+</div>
+
+    <!-- Aktueller Kurs + Veränderung -->
+    <p style="font-size: 12px; margin: 8px 0 4px;">Aktueller Kurs</p>
+    <div class="company-info">
+      <div>
+        <p class="price">${{ data.price }}</p>
+      </div>
+      <div>
+        <p :class="parseFloat(data.changePercent) >= 0 ? 'positive' : 'negative'">
+          {{ parseFloat(data.changePercent) >= 0 ? '+' : '' }}{{ data.changePercent }}%
+          <span v-if="parseFloat(data.changePercent) >= 0">↑</span>
+          <span v-else>↓</span>
+        </p>
+      </div>
+    </div>
+
+    <!-- Net Income TTM
+    <p style="font-size: 12px; margin-top: 20px;">Net Income TTM</p>
+    <p style="font-size: 24px; font-weight: 500;">{{ data.netIncomeTTM }}</p>
+
+    Gross Margin 
+    <p style="font-size: 12px; margin-top: 16px;">Gross Margin (TTM)</p>
+    <p style="font-size: 20px; font-weight: 500;">{{ data.grossMargin }}</p> -->
+
+    <p style="font-size: 10px; color: #888; margin-top: 12px;">
+      Daten von Finnhub • Live aktualisiert
+    </p>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'BaseCard',
+  props: {
+    data: {
+      type: Object,
+      required: true,
     },
-    computed: {
-      lastQuarterRevenue() {
-        return this.data.revenue["2024"].Q4;
-      },
-      previousQuarterRevenue() {
-        return this.data.revenue["2024"].Q3;
-      },
-      changeAbsolute() {
-        return this.lastQuarterRevenue - this.previousQuarterRevenue;
-      },
-      changePercentage() {
-        return ((this.changeAbsolute / this.previousQuarterRevenue) * 100);
-      }
-    }
-  };
-  </script>
-  
-  <style scoped>
-  .card {
-    background-color: #011F35;
-    border-radius: 16px;
-    padding: 20px 24px;
-    color: white;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
+  },
+  methods: {
+  handleLogoError(e) {
+    // Entferne das fehlerhafte img und zeige stattdessen den schönen CSS-Platzhalter
+    e.target.style.display = 'none';
+    e.target.parentElement.nextElementSibling.style.display = 'flex'; // falls nötig
+    // Oder einfach den ganzen Wrapper auf Platzhalter umstellen – hier einfache Lösung:
+    const wrapper = e.target.parentElement;
+    wrapper.innerHTML = `<div class="logo-placeholder">${this.data.symbol}</div>`;
   }
-  
-  .company-logo {
-    max-width: 100px;
-  }
-  
-  h2 {
-    font-size: 24px;
-    margin: 16px 0;
-  }
-  
-  p {
-    margin:  0;
-    font-size: 14px;
-    color: #dcdcdc;
-  }
-  
-  .company-name {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
-  
-  .company-info {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    gap: 8px;
-  }
-  
-  .positive {
-    color: #4CAF50; /* Grün */
-  }
-  
-  .negative {
-    color: #F44336; /* Rot */
-  }
-  </style>
-  
+}
+};
+</script>
+
+<style scoped>
+.card {
+  background-color: #011F35;
+  border-radius: 16px;
+  padding: 24px;
+  color: white;
+  min-width: 280px;          /* sorgt für schöne Kartenbreite beim Scrollen */
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.company-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 12px;
+  background: #023A62;
+}
+
+.company-name {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+h2 {
+  font-size: 22px;
+  margin: 0;
+}
+
+.price {
+  font-size: 28px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.company-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.positive {
+  color: #4CAF50;
+  font-weight: 500;
+}
+
+.negative {
+  color: #F44336;
+  font-weight: 500;
+}
+.logo-placeholder {
+  width: 80px;
+  height: 80px;
+  background: linear-gradient(135deg, #011F35, #023A62);
+  border: 2px solid #39DAFF;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: bold;
+  color: #39DAFF;
+  flex-shrink: 0;
+}
+
+.logo-wrapper {
+  width: 80px;
+  height: 80px;
+  position: relative;
+  flex-shrink: 0;
+}
+</style>
